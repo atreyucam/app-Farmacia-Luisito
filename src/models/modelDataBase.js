@@ -39,7 +39,6 @@ const Producto = sequelize.define('Producto',{
 Proveedor.hasMany(Producto,{as:'ProveedorProductos', foreignKey: 'id_proveedor'});
 Producto.belongsTo(Proveedor,{foreignKey: 'id_proveedor'});
 
-
 // Tabla Alertas
 const Alerta = sequelize.define('Alerta',{
     id_alerta:{type:DataTypes.INTEGER, primaryKey:true, autoIncrement:true},
@@ -75,50 +74,51 @@ Producto.hasMany(Detalle_CompraProveedor,{as:'DetalleCompraProducto', foreignKey
 Detalle_CompraProveedor.belongsTo(Producto,{foreignKey:'id_producto'});
 
 // // tabla Carrito_compras
-// const Carrito_compra = sequelize.define('Carrito_compra',{
-//     id_carrito: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-//     fechaCarrito: {type: DataTypes.DATE, allowNull: true},
-//     estadoCarrito: {type: DataTypes.BOOLEAN, allowNull: true}
-// },{tableName:'carritoCompras'});
-// Usuario.hasOne(Carrito_compra, { as: 'CarritoUsuario', foreignKey: 'id_usuario' });
-// Carrito_compra.belongsTo(Usuario, { foreignKey: 'id_usuario' });
-
+const Carrito_compra = sequelize.define('Carrito_compra',{
+    id_carrito: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    fechaCarrito: {type: DataTypes.DATE, allowNull: true},
+    estadoCarrito: {type: DataTypes.BOOLEAN, allowNull: true},
+    totalVentaCarrito:{type:DataTypes.DECIMAL, allowNull:false}
+},{tableName:'carritoCompras'});
+Usuario.hasOne(Carrito_compra, { as: 'CarritoUsuario', foreignKey: 'id_usuario' });
+Carrito_compra.belongsTo(Usuario, { foreignKey: 'id_usuario' });
 
 // // Tabla detalle_carrito
-// const Detalle_Carrito = sequelize.define('Detalle_Carrito',{
-//     id_detalleCarrito:{type:DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-// },{tableName:'detalleCarritos'});
-// Carrito_compra.hasMany(Detalle_Carrito, { as: 'DetalleCarrito', foreignKey: 'id_carrito' });
-// Detalle_Carrito.belongsTo(Carrito_compra, { foreignKey: 'id_carrito' });
-// Detalle_Carrito.hasMany(Producto,{as:'DetalleCarritoProductos', foreignKey:'id_producto'});
-// Producto.belongsTo(Detalle_Carrito,{foreignKey:'id_producto'});
+const Detalle_Carrito = sequelize.define('Detalle_Carrito',{
+    id_detalleCarrito:{type:DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    cantidad: { type: DataTypes.INTEGER, allowNull: false },
+    precioPorUnidad: { type: DataTypes.DECIMAL, allowNull: false }
+},{tableName:'detalleCarritos'});
+Carrito_compra.hasMany(Detalle_Carrito, { as: 'DetalleCarrito', foreignKey: 'id_carrito' });
+Detalle_Carrito.belongsTo(Carrito_compra, { foreignKey: 'id_carrito' });
+Producto.hasMany(Detalle_Carrito, { as: 'DetalleCarritoProductos', foreignKey: 'id_producto' });
+Detalle_Carrito.belongsTo(Producto, { foreignKey: 'id_producto' });
 
-// // Tabla ventas
-// const Venta = sequelize.define('Venta', {
-//     id_venta:{type:DataTypes.INTEGER, primaryKey: true, autoIncrement:true},
-//     fechaVenta:{type:DataTypes.DATE, allowNull: true},
-//     subTotalVenta:{type:DataTypes.DECIMAL, allowNull:false},
-//     descuentoVenta:{type:DataTypes.DECIMAL, allowNull:true},
-//     IVA_venta:{type:DataTypes.DECIMAL, allowNull:false},
-//     totalVenta:{type:DataTypes.DECIMAL, allowNull:false},
-//     tipoCompra:{type:DataTypes.STRING(20), allowNull:false},
-//     id_carrito:{type:DataTypes.INTEGER,allowNull:true}
-// },{tableName:'ventas'});
-// Usuario.hasMany(Venta, { as: 'VentaUsuario', foreignKey: 'id_usuario' });
-// Venta.belongsTo(Usuario, { foreignKey: 'id_usuario' });
-// // Relación opcional con Carrito_compra
-// Carrito_compra.hasOne(Venta, { foreignKey: 'id_carrito' });
-// Venta.belongsTo(Carrito_compra, { foreignKey: 'id_carrito' });
+// Tabla ventas
+const Venta = sequelize.define('Venta', {
+    id_venta:{type:DataTypes.INTEGER, primaryKey: true, autoIncrement:true},
+    numeroVenta:{type:DataTypes.INTEGER,allowNull:false},
+    fechaVenta:{type:DataTypes.DATE, allowNull: true},
+    subTotalVenta:{type:DataTypes.DECIMAL, allowNull:false},
+    descuentoVenta:{type:DataTypes.DECIMAL, allowNull:true},
+    IVA_venta:{type:DataTypes.DECIMAL, allowNull:false},
+    totalVenta:{type:DataTypes.DECIMAL, allowNull:false},
+    id_carrito:{type:DataTypes.INTEGER, allowNull:true}
+},{tableName:'ventas'});
+Usuario.hasMany(Venta, { as: 'VentaUsuario', foreignKey: 'id_usuario' });
+Venta.belongsTo(Usuario, { foreignKey: 'id_usuario' });
+Carrito_compra.hasOne(Venta, { foreignKey: 'id_carrito' });
+Venta.belongsTo(Carrito_compra, { foreignKey: 'id_carrito' });
 
 // // Tabla detalle_venta
-// const Detalle_venta = sequelize.define('Detalle_venta',{
-//     id_detalleVenta:{type:DataTypes.INTEGER, primaryKey:true, autoIncrement:true},
-//     cantidadVentaProducto:{type:DataTypes.INTEGER, allowNull:false},
-// },{tableName:'detalleVentas'});
-// Venta.hasMany(Detalle_venta, { as: 'DetalleVentas', foreignKey: 'id_venta' });
-// Detalle_venta.belongsTo(Venta, { foreignKey: 'id_venta' });
-// Detalle_venta.hasMany(Producto,{as:'DetalleVenta_Producto',foreignKey:'id_producto'});
-// Producto.belongsTo(Detalle_venta,{foreignKey:'id_producto'});
+const Detalle_venta = sequelize.define('Detalle_venta',{
+    id_detalleVenta:{type:DataTypes.INTEGER, primaryKey:true, autoIncrement:true},
+    cantidadVentaProducto:{type:DataTypes.INTEGER, allowNull:false},
+},{tableName:'detalleVentas'});
+Venta.hasMany(Detalle_venta, { as: 'DetalleVentas', foreignKey: 'id_venta' });
+Detalle_venta.belongsTo(Venta, { foreignKey: 'id_venta' });
+Producto.hasMany(Detalle_venta, { as: 'DetalleVenta_Producto', foreignKey: 'id_producto' });
+Detalle_venta.belongsTo(Producto, { foreignKey: 'id_producto' });
 
 module.exports = {
     Usuario,
@@ -127,8 +127,8 @@ module.exports = {
     Alerta,
     Compra_Proveedor,
     Detalle_CompraProveedor,
-    // Carrito_compra,
-    // Detalle_Carrito,
-    // Venta,
-    // Detalle_venta
+    Carrito_compra,
+    Detalle_Carrito,
+    Venta,
+    Detalle_venta
 };

@@ -1,4 +1,4 @@
-const {Usuario} = require('../models/modelDataBase');
+const {Usuario} = require('../models/modeloBaseDatos.js');
 
 class UsuarioRepository{
     async create(autorData) {

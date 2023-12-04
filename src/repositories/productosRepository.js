@@ -1,4 +1,4 @@
-const { Producto, Proveedor } = require('../models/modelDataBase');
+const { Producto, Proveedor } = require('../models/modeloBaseDatos.js');
 
 class ProductosRepository {
     async create(productoData) {

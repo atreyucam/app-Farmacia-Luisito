@@ -1,5 +1,5 @@
 // DetalleCarritoRepository.js
-const { Detalle_Carrito } = require('../models/modelDataBase');
+const { Detalle_Carrito } = require('../models/modeloBaseDatos.js');
 
 class DetalleCarritoRepository {
     async create(datosDetalleCarrito) {

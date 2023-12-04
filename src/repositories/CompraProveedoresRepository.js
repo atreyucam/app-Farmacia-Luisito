@@ -1,4 +1,4 @@
-const { Compra_Proveedor, Proveedor } = require('../models/modelDataBase');
+const { Compra_Proveedor, Proveedor } = require('../models/modeloBaseDatos.js');
 
 class CompraProveedoresRepository {
     async create(productoData) {

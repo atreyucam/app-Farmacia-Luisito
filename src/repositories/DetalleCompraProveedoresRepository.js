@@ -1,4 +1,4 @@
-const { Detalle_CompraProveedor, Producto ,Compra_Proveedor} = require('../models/modelDataBase');
+const { Detalle_CompraProveedor, Producto ,Compra_Proveedor} = require('../models/modeloBaseDatos.js');
 const ProductosRepository = require('../repositories/productosRepository'); // Asegúrate de que la ruta sea correcta
 // const Compra_Proveedor = require('../repositories/CompraProveedoresRepository');
 class DetalleCompraProveedoresRepository {

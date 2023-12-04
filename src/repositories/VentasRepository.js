@@ -22,4 +22,4 @@ class VentaRepository {
     }
 }
 
-module.exports = new VentaRepository();
+module.exports = new VentaRepository(); 

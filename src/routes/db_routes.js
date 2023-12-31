@@ -34,6 +34,8 @@ router.get("/productos/:id", ProductoController.getById);
 router.put("/productos/:id", ProductoController.update);
 router.delete("/productos/:id", ProductoController.delete);
 
+router.get("/productos/:id/precioVenta", ProductoController.getPrecioVenta);
+
 // Ruta a la tabla Alertas
 router.post("/alertas", AlertaController.create);
 router.get("/alertas", AlertaController.getAll);

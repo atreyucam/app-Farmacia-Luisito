@@ -12,12 +12,14 @@ const CarritoCompraController = require('../controllers/CarritoCompraController'
 const DetalleCarritoCompraController = require('../controllers/DetalleCarritoCompraController');
 const router = express.Router();
 
+
 // Ruta a la tabla Usuarios
 router.post('/usuarios', UsuarioController.create);
 router.get('/usuarios', UsuarioController.getAll);
 router.get('/usuarios/:id', UsuarioController.getById);
 router.put('/usuarios/:id', UsuarioController.update);
 router.delete('/usuarios/:id', UsuarioController.delete);
+router.post('/usuarios_prueba', UsuarioController.authenticate);
 
 // Ruta a la tabla proveedores
 router.post('/proveedores', ProveedorController.create);

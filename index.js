@@ -1,5 +1,5 @@
 // version 0.1 - dev
-
+require('dotenv').config();
 // const express = require("express");
 // const routesApp = require('./src/routes/db_routes');
 // const { sequelize } = require('./src/connections/connectionDataBase');
@@ -41,11 +41,10 @@ sequelize.sync({ force: false }).then(() => {
   });
   
 // Configuración para servir archivos estáticos
-app.use(express.static('public'));
-
-// ... Resto de tu código ...
+app.use(express.json());
 
 app.use('/api', routesApp);
+app.use(express.static('public'));
 
 app.listen(port, () => {
   console.log(`App Farmacia-Luisito en http://localhost:${port}`);

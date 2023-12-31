@@ -10,31 +10,45 @@ const DetalleVentaController = require("../controllers/DetalleVentaController");
 const CarritoCompraController = require("../controllers/CarritoCompraController");
 const DetalleCarritoCompraController = require("../controllers/DetalleCarritoCompraController");
 const ConfiguracionController = require("../controllers/ConfiguracionController");
+const {verificarToken, autorizarRol} = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-// Ruta a la tabla Usuarios
-router.post("/usuarios", UsuarioController.create);
-router.get("/usuarios", UsuarioController.getAll);
-router.get("/usuarios/:id", UsuarioController.getById);
-router.put("/usuarios/:id", UsuarioController.update);
-router.delete("/usuarios/:id", UsuarioController.delete);
+// aplica middleware a rutas protegidas
+router.get('/rutasProtegida', verificarToken, UsuarioController.getAll);
 
-// Ruta a la tabla proveedores
-router.post("/proveedores", ProveedorController.create);
-router.get("/proveedores", ProveedorController.getAll);
-router.get("/proveedores/:id", ProveedorController.getById);
-router.put("/proveedores/:id", ProveedorController.update);
-router.delete("/proveedores/:id", ProveedorController.delete);
 
-// Ruta a la tabla productos
-router.post("/productos", ProductoController.create);
+// rutas para autenticacion (Publicas)
+router.post("/registrerUser", UsuarioController.register);
+router.post("/loginUser", UsuarioController.login);
+
+// Rutas de Usuarios
+// Admin: Gestión completa de usuarios
+router.get("/usuarios", verificarToken, autorizarRol('administrador'), UsuarioController.getAll);
+router.delete("/usuarios/:id", verificarToken, autorizarRol('administrador'), UsuarioController.delete);
+// Empleado y Cliente: Acceso a su propia información y actualización
+router.get("/usuarios/:id", verificarToken, autorizarRol('administrador', 'empleado', 'cliente'),  UsuarioController.getById);
+router.put("/usuarios/:id", verificarToken, autorizarRol('administrador', 'empleado', 'cliente'), UsuarioController.update);
+
+router.get('/usuarioPerfil', verificarToken, autorizarRol('administrador', 'empleado', 'cliente'),UsuarioController.getPerfil);
+
+
+// Rutas de Proveedores
+// Admin: CRUD completo; Empleado: Solo listado y detalle
+router.post("/proveedores", verificarToken, autorizarRol('administrador'), ProveedorController.create);
+router.get("/proveedores", verificarToken, autorizarRol('administrador', 'empleado'), ProveedorController.getAll);
+router.get("/proveedores/:id", verificarToken, autorizarRol('administrador', 'empleado'), ProveedorController.getById);
+router.put("/proveedores/:id", verificarToken, autorizarRol('administrador'), ProveedorController.update);
+router.delete("/proveedores/:id", verificarToken, autorizarRol('administrador'), ProveedorController.delete);
+
+// Rutas de Productos
+// Admin y Empleado: CRUD completo; Cliente: Solo listado y detalle
+router.post("/productos", verificarToken, autorizarRol('administrador', 'empleado'), ProductoController.create);
 router.get("/productos", ProductoController.getAll);
 router.get("/productos/:id", ProductoController.getById);
-router.put("/productos/:id", ProductoController.update);
-router.delete("/productos/:id", ProductoController.delete);
+router.put("/productos/:id", verificarToken, autorizarRol('administrador', 'empleado'), ProductoController.update);
+router.delete("/productos/:id", verificarToken, autorizarRol('administrador', 'empleado'), ProductoController.delete);
 
-router.get("/productos/:id/precioVenta", ProductoController.getPrecioVenta);
 
 // Ruta a la tabla Alertas
 router.post("/alertas", AlertaController.create);
@@ -72,12 +86,13 @@ router.delete(
   DetalleCompraProveedorController.delete
 );
 
-// Ruta a la tabla venta
-router.post("/ventas", VentaController.create);
-router.get("/ventas", VentaController.getAll);
-router.get("/ventas/:id", VentaController.getById);
-router.put("/ventas/:id", VentaController.update);
-router.delete("/ventas/:id", VentaController.delete);
+// Rutas de Venta
+// Admin y Empleado: CRUD completo; Cliente: Crear y ver sus propias ventas
+router.post("/ventas", verificarToken, autorizarRol('administrador', 'empleado', 'cliente'), VentaController.create);
+router.get("/ventas", verificarToken, autorizarRol('administrador', 'empleado'), VentaController.getAll);
+router.get("/ventas/:id", verificarToken, autorizarRol('administrador', 'empleado', 'cliente'), VentaController.getById);
+router.put("/ventas/:id", verificarToken, autorizarRol('administrador', 'empleado'), VentaController.update);
+router.delete("/ventas/:id", verificarToken, autorizarRol('administrador', 'empleado'), VentaController.delete);
 
 // Ruta a la tabla detalle venta
 router.post("/detalleVentas", DetalleVentaController.create);
@@ -106,11 +121,18 @@ router.delete(
   DetalleCarritoCompraController.delete
 );
 
-// Rutas para la configuración
-router.post("/configuraciones", ConfiguracionController.setConfig);
-router.get("/configuraciones/", ConfiguracionController.getConfig);
-router.get("/configuraciones/:id", ConfiguracionController.getConfigById);
-router.put("/configuraciones/:id", ConfiguracionController.update);
-router.delete("/configuraciones/:id", ConfiguracionController.delete);
+// Rutas de Configuraciones (Solo Admin)
+router.post("/configuraciones", verificarToken, autorizarRol('administrador'), ConfiguracionController.setConfig);
+router.get("/configuraciones/", verificarToken, autorizarRol('administrador'), ConfiguracionController.getConfig);
+router.get("/configuraciones/:id", verificarToken, autorizarRol('administrador'), ConfiguracionController.getConfigById);
+router.put("/configuraciones/:id", verificarToken, autorizarRol('administrador'), ConfiguracionController.update);
+router.delete("/configuraciones/:id", verificarToken, autorizarRol('administrador'), ConfiguracionController.delete);
+
+
+router.get("/productos/:id/precioVenta", ProductoController.getPrecioVenta);
 
 module.exports = router;
+
+
+// // Public
+// router.post("/usuarios", UsuarioController.create);

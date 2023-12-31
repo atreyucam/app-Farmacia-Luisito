@@ -1,4 +1,5 @@
 const express = require("express");
+const multer = require('multer');
 const UsuarioController = require("../controllers/UsuariosController");
 const ProveedorController = require("../controllers/ProveedoresController");
 const ProductoController = require("../controllers/ProductosController");
@@ -12,7 +13,18 @@ const DetalleCarritoCompraController = require("../controllers/DetalleCarritoCom
 const ConfiguracionController = require("../controllers/ConfiguracionController");
 const {verificarToken, autorizarRol} = require('../middleware/authMiddleware');
 
+// importar
+const ProductosImportController = require('../controllers/imports/productosImportController');
+const ProveedorImportController = require('../controllers/imports/proveedoresImportController');
+
+
+const upload = multer({ dest: 'uploads/' });
 const router = express.Router();
+
+// Ruta para importar productos desde Excel
+router.post('/importarProductos', upload.single('file'), ProductosImportController.import);
+router.post('/importarProveedores', upload.single('file'), ProveedorImportController.import);
+
 
 // aplica middleware a rutas protegidas
 router.get('/rutasProtegida', verificarToken, UsuarioController.getAll);
